@@ -1,0 +1,241 @@
+<?php
+use App\Models\Country;
+?>
+
+@extends('layouts.admin')
+
+@section('title')
+Candidates
+@endsection
+
+@section('css')
+@endsection
+
+
+
+
+@section('content')
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title "><i class="fa fa-paw mr-1"></i>
+                    Candidates</h3>
+
+            <div class="card-tools">
+                <a href="{{ route('personal.create') }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Add Candidates</a>
+            </div>
+      </div>
+
+
+
+    <!-- /.card-header -->
+    <div class="card-body table-responsive ">
+  
+<form action="{{ route('advance_search') }}" method="GET">
+<h3> Search</h3><br>
+<div class="row">
+    <div class="col-lg-3">
+    <input type="text" name="name" class="form-control" placeholder="Name"><br>
+    </div>
+
+     <div class="col-lg-3">
+    <input type="text" name="age" class="form-control" placeholder="Age"><br>
+    </div>
+
+      <div class="col-lg-3">
+                <select class="form-control valdation_select" name="gender">
+                    <option value=''> -Gender </option>  
+                    <option value='Male' > Male</option>  
+                    <option value='Female'> Female </option>   
+                    <option value='Other'> Other </option>   
+                </select>         
+    </div>
+
+       <div class="col-lg-3">
+                <select class="form-control valdation_select" name="merital_status">
+                    <option value=''> -Merital Status </option>  
+                    <option value='Married' > Married</option>  
+                    <option value='Unmarried'> Unmarried </option>   
+                </select>         
+      </div>
+</div>
+
+<div class="row">
+   
+
+  <div class="col-lg-3">
+               <select class="form-control select2" name="citizenship" id="citizenship">
+                              <option value="">-Country</option>
+                              @foreach ($country as $name)
+                              <option value="{{ $name->country_id }}">{{ $name->country_name }}</option>
+                              @endforeach
+                </select>  
+    </div>
+
+     <div class="col-lg-3">
+    <input type="text" name="religion" class="form-control" placeholder="Religion"><br>
+    </div>
+
+    <div class="col-lg-3">
+      <input type="text" name="language" class="form-control" placeholder="Language"><br>
+    </div>
+
+     <div class="col-lg-3">
+       <input type="text" name="other_skill" class="form-control" placeholder="Other Skill"><br>
+    </div>
+</div>
+
+<div class="row">
+ 
+
+     <div class="col-lg-3">
+       <input type="text" name="computer_skill" class="form-control" placeholder="Computer Skill"><br>
+    </div>
+
+    <div class="col-lg-3">
+      <input type="text" name="hobbies_sport" class="form-control" placeholder="Hobbies Sport"><br>
+    </div>
+
+      <div class="col-lg-3">
+                 <select class="form-control valdation_select" name="education_type" >
+                         <option value=''> -Education Type </option>  
+                         <option value='HD' > Highest  Degree Obtained </option>  
+                         <option value='OD'> Other Degree Obtained</option>   
+                         <option value='VC' > Vocational Course Taken </option>  
+                         <option value='SHS'> Secondary (High School)</option> 
+                         <option value='OE'> Other Education Obtained</option>   
+                 </select>  
+     </div>
+
+    <div class="col-lg-3">
+          <input type="text" name="course_name" class="form-control" placeholder="Course Name"><br>
+
+    </div>
+
+    <div class="col-lg-3">
+           <input type="text" name="designation" class="form-control" placeholder="Designation"><br>
+    </div>
+
+
+
+    <div>
+        <input type="submit" value="Search" class="btn btn-secondary">
+    </div>
+</div>
+
+</form>
+
+<br>
+<div class="card-tools float-right">
+        <div class="row">
+        <a href="{{URL::to('exportCsv')}}" class="btn btn-success" id="export_records">Export</a>&nbsp;
+ <button href="" class="btn btn-success"  id="candidatedata" data-toggle='modal' data-target='#shortlist'>Shortlist</button>&nbsp;
+          <button  class='btn btn-success' data-toggle='modal' data-target='#mail'> Send Mail</button>&nbsp;
+           <button  class='btn btn-success' data-toggle='modal' data-target='#sms'> Send Sms</button>&nbsp;
+        </div>
+    </div>
+
+
+
+        <table class="table table-hover" id="">
+            <thead>
+                <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Citizenship</th>
+                        <th>Merital Status</th>
+                        <th>Religion</th>
+                    
+                      
+                        <th>Action</th>
+                       
+                </tr>
+            </thead>
+            <tbody>
+                   @forelse ($data as $candidate)
+                    <tr>
+                         <td>{{ $candidate->name}}</td>
+                         <td>{{ $candidate->age }}</td>
+                         <td>{{ $candidate->gender  }}</td>
+                          <td>
+                         <?php $countryname = Country::where(['country_id'=>$candidate->citizenship])->first()?>
+                                {{$countryname->country_name}}
+                         </td>
+
+                         <td>{{ $candidate->merital_status}}</td>
+                         <td>{{ $candidate->religion}}</td>
+                      
+
+
+                        <td>
+
+                    <div class="row">
+                       {{-- <a class="btn btn-sm btn-primary"  href="{{ route('personal.show',$candidate->candidate_id ) }}"><i class="fa fa-eye"></i> </a>&nbsp;--}}
+
+                            
+                       <a class="btn btn-sm btn-dark" href="{{ route('assessment.create',$candidate->candidate_id ) }}"><i class="fa fa-file"></i> Assessment</a>&nbsp;
+
+
+                           <a class="btn btn-sm btn-primary" title="Pdf"  href="{{url('/pdf')}}?id={{$candidate->candidate_id}}"><i class=" fa fa-file-pdf-o"></i> </a>&nbsp;
+
+                        
+                       <a class="btn btn-sm btn-warning" href="{{ route('personal.edit',$candidate->candidate_id ) }}"><i class="fa fa-edit"></i> </a>&nbsp;
+
+
+                        <form action="{{ route('personal.destroy',$candidate->candidate_id ) }}" method="POST" onclick="return confirm(' Are you sure you want to Delete?')">
+
+                            @csrf
+                            @method('DELETE') 
+                        <button type="submit" class="btn btn-sm btn-danger"  ><i class="fa fa-trash-alt"> </i></button>
+                        </form>
+
+                    </div>
+                        
+                           
+
+                        </td>
+
+                    </tr>
+                @empty
+                    <tr>
+                        <td><i class="fas fa-folder-open"></i> No Record found </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+  </div>
+@endsection
+
+@section('js')
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    var table = $('#example').DataTable({
+       orderCellsTop: true,
+       fixedHeader: true 
+    });
+
+    //Creamos una fila en el head de la tabla y lo clonamos para cada columna
+    $('#example thead tr').clone(true).appendTo( '#example thead' );
+
+    $('#example thead tr:eq(1) th').each( function (i) {
+        var title = $(this).text(); //es el nombre de la columna
+          if (title != 'Action') {
+        $(this).html( '<input type="text" placeholder="'+title+'" class="form-control" />' );
+ 
+        $( 'input', this ).on( 'keyup change', function () {
+            if ( table.column(i).search() !== this.value ) {
+                table
+                    .column(i)
+                    .search( this.value )
+                    .draw();
+            }
+        });
+    }
+    } );   
+});
+</script> 
+@stop
