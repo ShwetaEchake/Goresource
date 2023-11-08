@@ -46,7 +46,7 @@ Candidates
 
   <!------------------------Candidate Search Start ------------------------------->
 <form action="{{ route('advance_search') }}" method="GET">
-<h3> Search</h3><br>
+<h3> Searching</h3><br>
 
 <div class="row">
 
